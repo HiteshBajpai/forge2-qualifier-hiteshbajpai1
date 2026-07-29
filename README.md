@@ -7,7 +7,8 @@ TaskFlow AI is a modern, high-performance Kanban project management application 
 ## 🚀 Live Application & Video Evidence
 
 - 🌐 **Live Web Application**: [https://forge2-qualifier-hiteshbajpai1.vercel.app/](https://forge2-qualifier-hiteshbajpai1.vercel.app/)
-- 🎥 **Walkthrough Evidence Video**: [Click Here to Watch / Download Evidence Video (MP4)](https://raw.githubusercontent.com/HiteshBajpai/forge2-qualifier-hiteshbajpai1/main/walkthrough%20evidence/walkthrough%20evidence%20.mp4)
+- 🎥 **Walkthrough Evidence Video (Media Direct Stream)**: [Click to Play / Download Video](https://media.githubusercontent.com/media/HiteshBajpai/forge2-qualifier-hiteshbajpai1/main/walkthrough%20evidence/walkthrough%20evidence%20.mp4)
+- 📥 **Alternative Download Link**: [Download MP4 Video](https://github.com/HiteshBajpai/forge2-qualifier-hiteshbajpai1/raw/main/walkthrough%20evidence/walkthrough%20evidence%20.mp4)
 
 ---
 
