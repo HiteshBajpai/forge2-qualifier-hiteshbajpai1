@@ -19,7 +19,7 @@ This project was built entirely by orchestrating a team of two AI agents (Hermes
 
 ---
 
-## Tech Stack
+## Tech Stack  
 
 -   **Backend**: Laravel (PHP 8.3), SQLite Database, Eloquent ORM.
 -   **Frontend**: React 19 (Vite), Vanilla CSS (Custom Glassmorphism, Google Fonts).
