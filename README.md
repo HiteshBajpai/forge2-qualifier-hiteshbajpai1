@@ -86,7 +86,7 @@ Make sure you have installed:
    ```bash
    npm install
    ```
-3. Start the Vite dev server:
+3. Start the Vite dev server:  
    ```bash
    npm run dev
    ```
