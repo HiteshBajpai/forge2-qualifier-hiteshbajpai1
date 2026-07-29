@@ -91,7 +91,7 @@ Make sure you have installed:
    npm run dev
    ```
 4. Open the local address in your browser: `http://localhost:5173`.
-5. Click **"🚀 Seed Demo Board"** to initialize data.
+5. Click ** Launched Dashboard ** Taskflow A.I
 
 ---
 
