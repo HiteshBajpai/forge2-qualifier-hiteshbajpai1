@@ -22,13 +22,109 @@ import { motion, AnimatePresence } from 'framer-motion';
 
 const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:8000/api';
 
+const DEFAULT_MEMBERS = [
+  { id: 1, name: 'Hitesh Bajpai', email: 'hitesh@taskflow.ai', avatar_color: '#06b6d4' },
+  { id: 2, name: 'Alex Rivera', email: 'alex@taskflow.ai', avatar_color: '#3b82f6' },
+  { id: 3, name: 'Sophia Chen', email: 'sophia@taskflow.ai', avatar_color: '#a855f7' }
+];
+
+const DEFAULT_TAGS = [
+  { id: 1, name: 'Feature', color: '#06b6d4' },
+  { id: 2, name: 'Bug', color: '#ef4444' },
+  { id: 3, name: 'Urgent', color: '#f59e0b' },
+  { id: 4, name: 'AI Engine', color: '#8b5cf6' }
+];
+
+const INITIAL_FALLBACK_BOARDS = [
+  {
+    id: 1,
+    name: 'TaskFlow AI Master Board',
+    lists: [
+      {
+        id: 101,
+        name: 'Backlog',
+        cards: [
+          {
+            id: 1001,
+            board_list_id: 101,
+            title: 'Setup Real-time AI Assistant Agent',
+            description: 'Integrate LLM API endpoints for real-time task auto-summarization and priority tagging.',
+            due_date: '2026-08-01T10:00',
+            member_id: 1,
+            member: DEFAULT_MEMBERS[0],
+            tags: [DEFAULT_TAGS[0], DEFAULT_TAGS[3]]
+          },
+          {
+            id: 1002,
+            board_list_id: 101,
+            title: 'Design Dark Obsidian UI Components',
+            description: 'Refine glassmorphic cards, glow effects, and framer-motion micro-interactions.',
+            due_date: '2026-08-05T18:00',
+            member_id: 2,
+            member: DEFAULT_MEMBERS[1],
+            tags: [DEFAULT_TAGS[0]]
+          }
+        ]
+      },
+      {
+        id: 102,
+        name: 'In Progress',
+        cards: [
+          {
+            id: 1003,
+            board_list_id: 102,
+            title: 'Vercel & Render Deployment Pipeline',
+            description: 'Configure Vite build scripts, SPA rewrites, and PostgreSQL database connections.',
+            due_date: '2026-07-30T12:00',
+            member_id: 1,
+            member: DEFAULT_MEMBERS[0],
+            tags: [DEFAULT_TAGS[2]]
+          }
+        ]
+      },
+      {
+        id: 103,
+        name: 'Review & QA',
+        cards: [
+          {
+            id: 1004,
+            board_list_id: 103,
+            title: 'Branding Purge & Hitesh Bajpai Profile',
+            description: 'Ensure 100% clean TaskFlow AI branding across all screens and user profile dropdowns.',
+            due_date: '2026-07-28T15:00',
+            member_id: 1,
+            member: DEFAULT_MEMBERS[0],
+            tags: [DEFAULT_TAGS[0]]
+          }
+        ]
+      },
+      {
+        id: 104,
+        name: 'Completed',
+        cards: [
+          {
+            id: 1005,
+            board_list_id: 104,
+            title: 'Vite & Framer Motion Setup',
+            description: 'Core React 19 app architecture initialized with cyan obsidian design system.',
+            due_date: '2026-07-27T09:00',
+            member_id: 3,
+            member: DEFAULT_MEMBERS[2],
+            tags: [DEFAULT_TAGS[0]]
+          }
+        ]
+      }
+    ]
+  }
+];
+
 function Board() {
   const navigate = useNavigate();
   const [boards, setBoards] = useState([]);
   const [selectedBoardId, setSelectedBoardId] = useState(null);
   const [boardDetails, setBoardDetails] = useState(null);
-  const [members, setMembers] = useState([]);
-  const [tags, setTags] = useState([]);
+  const [members, setMembers] = useState(DEFAULT_MEMBERS);
+  const [tags, setTags] = useState(DEFAULT_TAGS);
   const [loading, setLoading] = useState(false);
   const [seeding, setSeeding] = useState(false);
 
@@ -79,13 +175,21 @@ function Board() {
   const fetchBoards = async () => {
     try {
       const res = await fetch(`${API_BASE}/boards`);
+      if (!res.ok) throw new Error("API Offline");
       const data = await res.json();
       setBoards(data);
       if (data.length > 0 && !selectedBoardId) {
         setSelectedBoardId(data[0].id);
       }
     } catch (err) {
-      console.error("Error fetching boards:", err);
+      console.warn("Backend API offline, using local state mode:", err);
+      if (boards.length === 0) {
+        const fallbackList = INITIAL_FALLBACK_BOARDS.map(b => ({ id: b.id, name: b.name }));
+        setBoards(fallbackList);
+        if (!selectedBoardId) {
+          setSelectedBoardId(INITIAL_FALLBACK_BOARDS[0].id);
+        }
+      }
     }
   };
 
@@ -93,10 +197,13 @@ function Board() {
     setLoading(true);
     try {
       const res = await fetch(`${API_BASE}/boards/${id}`);
+      if (!res.ok) throw new Error("API Offline");
       const data = await res.json();
       setBoardDetails(data);
     } catch (err) {
-      console.error("Error fetching board details:", err);
+      console.warn("Backend API offline, loading mock board data:", err);
+      const found = INITIAL_FALLBACK_BOARDS.find(b => b.id === Number(id)) || INITIAL_FALLBACK_BOARDS[0];
+      setBoardDetails(found);
     } finally {
       setLoading(false);
     }
@@ -105,20 +212,22 @@ function Board() {
   const fetchMembers = async () => {
     try {
       const res = await fetch(`${API_BASE}/members`);
+      if (!res.ok) throw new Error("API Offline");
       const data = await res.json();
       setMembers(data);
     } catch (err) {
-      console.error("Error fetching members:", err);
+      console.warn("Using default members list");
     }
   };
 
   const fetchTags = async () => {
     try {
       const res = await fetch(`${API_BASE}/tags`);
+      if (!res.ok) throw new Error("API Offline");
       const data = await res.json();
       setTags(data);
     } catch (err) {
-      console.error("Error fetching tags:", err);
+      console.warn("Using default tags list");
     }
   };
 
@@ -126,13 +235,19 @@ function Board() {
     setSeeding(true);
     try {
       const res = await fetch(`${API_BASE}/seed-demo`, { method: 'POST' });
-      await res.json();
-      await fetchBoards();
-      await fetchMembers();
-      await fetchTags();
+      if (res.ok) {
+        await fetchBoards();
+        await fetchMembers();
+        await fetchTags();
+      } else {
+        throw new Error("Backend offline");
+      }
     } catch (err) {
-      console.error("Error seeding demo:", err);
-      alert("Failed to connect to backend server. Make sure your Laravel server is running on http://localhost:8000!");
+      console.warn("Seeding demo workspace in local mode");
+      const defaultBoards = INITIAL_FALLBACK_BOARDS.map(b => ({ id: b.id, name: b.name }));
+      setBoards(defaultBoards);
+      setSelectedBoardId(1);
+      setBoardDetails(INITIAL_FALLBACK_BOARDS[0]);
     } finally {
       setSeeding(false);
     }
@@ -141,37 +256,68 @@ function Board() {
   const handleCreateBoard = async (e) => {
     e.preventDefault();
     if (!newBoardName.trim()) return;
+    const newBoardObj = {
+      id: Date.now(),
+      name: newBoardName,
+      lists: [
+        { id: Date.now() + 1, name: 'To Do', cards: [] },
+        { id: Date.now() + 2, name: 'In Progress', cards: [] },
+        { id: Date.now() + 3, name: 'Done', cards: [] }
+      ]
+    };
+
     try {
       const res = await fetch(`${API_BASE}/boards`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ name: newBoardName })
       });
-      const data = await res.json();
-      setBoards([...boards, data]);
-      setSelectedBoardId(data.id);
+      if (res.ok) {
+        const data = await res.json();
+        setBoards([...boards, data]);
+        setSelectedBoardId(data.id);
+      } else {
+        throw new Error("API offline");
+      }
+    } catch (err) {
+      setBoards([...boards, { id: newBoardObj.id, name: newBoardObj.name }]);
+      INITIAL_FALLBACK_BOARDS.push(newBoardObj);
+      setSelectedBoardId(newBoardObj.id);
+      setBoardDetails(newBoardObj);
+    } finally {
       setNewBoardName('');
       setShowBoardModal(false);
-    } catch (err) {
-      console.error(err);
     }
   };
 
   const handleCreateList = async (e) => {
     e.preventDefault();
     if (!newListName.trim() || !selectedBoardId) return;
+    const newListObj = {
+      id: Date.now(),
+      name: newListName,
+      cards: []
+    };
+
     try {
       const res = await fetch(`${API_BASE}/lists`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ name: newListName, board_id: selectedBoardId })
       });
-      await res.json();
-      fetchBoardDetails(selectedBoardId);
+      if (res.ok) {
+        fetchBoardDetails(selectedBoardId);
+      } else {
+        throw new Error("API offline");
+      }
+    } catch (err) {
+      if (boardDetails) {
+        const updatedLists = [...(boardDetails.lists || []), newListObj];
+        setBoardDetails({ ...boardDetails, lists: updatedLists });
+      }
+    } finally {
       setNewListName('');
       setShowListModal(false);
-    } catch (err) {
-      console.error(err);
     }
   };
 
@@ -179,44 +325,65 @@ function Board() {
     if (!selectedBoardId || !window.confirm("Are you sure you want to delete this board and all its tasks?")) return;
     try {
       await fetch(`${API_BASE}/boards/${selectedBoardId}`, { method: 'DELETE' });
+    } catch (err) {
+      console.warn("Deleting board locally");
+    } finally {
       const remaining = boards.filter(b => b.id !== selectedBoardId);
       setBoards(remaining);
       setSelectedBoardId(remaining.length > 0 ? remaining[0].id : null);
-    } catch (err) {
-      console.error(err);
     }
   };
 
   const handleSaveCard = async (e) => {
     e.preventDefault();
+    const assignedMember = members.find(m => m.id === Number(cardForm.member_id));
+    const selectedTagObjects = tags.filter(t => cardForm.tags.includes(t.id));
+
+    const cardPayload = {
+      id: selectedCard ? selectedCard.id : Date.now(),
+      board_list_id: selectedCard ? selectedCard.board_list_id : cardListId,
+      title: cardForm.title,
+      description: cardForm.description,
+      due_date: cardForm.due_date || null,
+      member_id: cardForm.member_id ? Number(cardForm.member_id) : null,
+      member: assignedMember || null,
+      tags: selectedTagObjects
+    };
+
     try {
       const url = selectedCard 
         ? `${API_BASE}/cards/${selectedCard.id}`
         : `${API_BASE}/cards`;
-      
-      const payload = {
-        title: cardForm.title,
-        description: cardForm.description,
-        due_date: cardForm.due_date || null,
-        member_id: cardForm.member_id || null,
-        tags: cardForm.tags
-      };
-
-      if (!selectedCard) {
-        payload.board_list_id = cardListId;
-      }
 
       const res = await fetch(url, {
         method: selectedCard ? 'PUT' : 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
+        body: JSON.stringify(cardPayload)
       });
-      await res.json();
-      fetchBoardDetails(selectedBoardId);
+      if (res.ok) {
+        fetchBoardDetails(selectedBoardId);
+      } else {
+        throw new Error("API offline");
+      }
+    } catch (err) {
+      if (boardDetails && boardDetails.lists) {
+        const updatedLists = boardDetails.lists.map(list => {
+          if (selectedCard) {
+            const hasCard = list.cards && list.cards.some(c => c.id === selectedCard.id);
+            if (hasCard) {
+              const updatedCards = list.cards.map(c => c.id === selectedCard.id ? { ...c, ...cardPayload } : c);
+              return { ...list, cards: updatedCards };
+            }
+          } else if (list.id === cardListId) {
+            return { ...list, cards: [...(list.cards || []), cardPayload] };
+          }
+          return list;
+        });
+        setBoardDetails({ ...boardDetails, lists: updatedLists });
+      }
+    } finally {
       setShowCardModal(false);
       setSelectedCard(null);
-    } catch (err) {
-      console.error(err);
     }
   };
 
@@ -224,11 +391,18 @@ function Board() {
     if (!window.confirm("Delete this card?")) return;
     try {
       await fetch(`${API_BASE}/cards/${cardId}`, { method: 'DELETE' });
-      fetchBoardDetails(selectedBoardId);
+    } catch (err) {
+      console.warn("Deleting card in local state mode");
+    } finally {
+      if (boardDetails && boardDetails.lists) {
+        const updatedLists = boardDetails.lists.map(list => ({
+          ...list,
+          cards: list.cards ? list.cards.filter(c => c.id !== cardId) : []
+        }));
+        setBoardDetails({ ...boardDetails, lists: updatedLists });
+      }
       setShowCardModal(false);
       setSelectedCard(null);
-    } catch (err) {
-      console.error(err);
     }
   };
 
@@ -238,7 +412,7 @@ function Board() {
       title: card.title,
       description: card.description || '',
       due_date: card.due_date ? card.due_date.substring(0, 16) : '',
-      member_id: card.member_id || '',
+      member_id: card.member_id || (card.member ? card.member.id : ''),
       tags: card.tags ? card.tags.map(t => t.id) : []
     });
     setShowCardModal(true);
@@ -259,6 +433,13 @@ function Board() {
 
   const handleCreateMember = async (e) => {
     e.preventDefault();
+    const newMember = {
+      id: Date.now(),
+      name: memberForm.name,
+      email: memberForm.email,
+      avatar_color: memberForm.avatar_color || '#06b6d4'
+    };
+
     try {
       const res = await fetch(`${API_BASE}/members`, {
         method: 'POST',
@@ -267,14 +448,14 @@ function Board() {
       });
       if (res.ok) {
         await fetchMembers();
-        setShowMemberModal(false);
-        setMemberForm({ name: '', email: '', avatar_color: '#06b6d4' });
       } else {
-        const errData = await res.json();
-        alert(errData.message || "Error creating member");
+        throw new Error("API offline");
       }
     } catch (err) {
-      console.error(err);
+      setMembers([...members, newMember]);
+    } finally {
+      setShowMemberModal(false);
+      setMemberForm({ name: '', email: '', avatar_color: '#06b6d4' });
     }
   };
 
@@ -335,10 +516,8 @@ function Board() {
           position: newPos
         })
       });
-      
-      fetchBoardDetails(selectedBoardId);
     } catch (err) {
-      console.error("Drop handling failed:", err);
+      console.warn("Card drop synchronized locally");
     }
   };
 
@@ -349,6 +528,7 @@ function Board() {
   };
 
   const getInitials = (name) => {
+    if (!name) return 'U';
     return name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
   };
 
@@ -544,8 +724,14 @@ function Board() {
                     title="Delete column"
                     onClick={async () => {
                       if (window.confirm(`Delete column "${list.name}" and all its cards?`)) {
-                        await fetch(`${API_BASE}/lists/${list.id}`, { method: 'DELETE' });
-                        fetchBoardDetails(selectedBoardId);
+                        try {
+                          await fetch(`${API_BASE}/lists/${list.id}`, { method: 'DELETE' });
+                        } catch (err) {
+                          console.warn("Deleting column locally");
+                        } finally {
+                          const updatedLists = boardDetails.lists.filter(l => l.id !== list.id);
+                          setBoardDetails({ ...boardDetails, lists: updatedLists });
+                        }
                       }
                     }}
                   >
@@ -635,7 +821,6 @@ function Board() {
               {seeding ? 'Generating AI Board...' : '🚀 Create AI Board'}
             </button>
           </div>
-
         )}
       </div>
 
@@ -798,7 +983,7 @@ function Board() {
                       className="btn btn-danger" 
                       onClick={() => handleDeleteCard(selectedCard.id)}
                     >
-                      Delete Card
+                      <Trash2 size={16} /> Delete Card
                     </button>
                   )}
                 </div>
@@ -826,52 +1011,49 @@ function Board() {
                 <h3 className="modal-title">Add Team Member</h3>
                 <button type="button" className="close-btn" onClick={() => setShowMemberModal(false)}>✕</button>
               </div>
-              
               <div className="form-group">
-                <label className="form-label">Full Name</label>
+                <label className="form-label">Name</label>
                 <input 
                   type="text" 
                   className="form-input" 
-                  placeholder="e.g. Hitesh Bajpai"
+                  placeholder="e.g. Rahul Sharma" 
                   value={memberForm.name} 
                   onChange={(e) => setMemberForm({ ...memberForm, name: e.target.value })}
                   required
+                  autoFocus
                 />
               </div>
-
               <div className="form-group">
-                <label className="form-label">Email Address</label>
+                <label className="form-label">Email</label>
                 <input 
                   type="email" 
                   className="form-input" 
-                  placeholder="e.g. hitesh@taskflow.ai"
+                  placeholder="rahul@taskflow.ai" 
                   value={memberForm.email} 
                   onChange={(e) => setMemberForm({ ...memberForm, email: e.target.value })}
                   required
                 />
               </div>
-
               <div className="form-group">
-                <label className="form-label">Avatar Color Accent</label>
-                <div style={{ display: 'flex', gap: '0.65rem' }}>
-                  {['#06b6d4', '#22d3ee', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6'].map(color => (
+                <label className="form-label">Avatar Color</label>
+                <div style={{ display: 'flex', gap: '0.5rem' }}>
+                  {['#06b6d4', '#3b82f6', '#8b5cf6', '#ec4899', '#f59e0b', '#10b981'].map(color => (
                     <div 
-                      key={color} 
+                      key={color}
                       onClick={() => setMemberForm({ ...memberForm, avatar_color: color })}
-                      style={{ 
-                        width: '32px', 
-                        height: '32px', 
-                        borderRadius: '50%', 
-                        backgroundColor: color, 
+                      style={{
+                        width: '28px',
+                        height: '28px',
+                        borderRadius: '50%',
+                        backgroundColor: color,
                         cursor: 'pointer',
-                        border: memberForm.avatar_color === color ? '2px solid white' : '2px solid transparent',
-                        boxShadow: '0 0 10px rgba(0,0,0,0.5)'
-                      }} 
+                        border: memberForm.avatar_color === color ? '2px solid white' : 'none',
+                        boxShadow: memberForm.avatar_color === color ? '0 0 8px ' + color : 'none'
+                      }}
                     />
                   ))}
                 </div>
               </div>
-
               <div className="modal-actions">
                 <button type="button" className="btn btn-secondary" onClick={() => setShowMemberModal(false)}>Cancel</button>
                 <button type="submit" className="btn btn-primary">Add Member</button>
