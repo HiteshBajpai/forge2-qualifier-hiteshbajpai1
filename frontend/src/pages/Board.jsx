@@ -16,9 +16,15 @@ import {
   ChevronDown,
   Shield,
   Mail,
-  Check
+  Check,
+  MessageSquare,
+  Bot,
+  Activity,
+  Zap,
+  Code
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+
 
 const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:8000/api';
 
@@ -157,6 +163,24 @@ function Board() {
 
   const [showMemberModal, setShowMemberModal] = useState(false);
   const [memberForm, setMemberForm] = useState({ name: '', email: '', avatar_color: '#06b6d4' });
+
+  // Slack Multi-Agent Terminal State
+  const [showSlackModal, setShowSlackModal] = useState(false);
+  const [activeSlackChannel, setActiveSlackChannel] = useState('#sprint-main');
+  const [slackLogs, setSlackLogs] = useState({
+    '#sprint-main': [
+      { sender: 'Hitesh Bajpai (PM)', time: '15:43:00', type: 'human', text: 'Scaffold TaskFlow AI Kanban Board & 3-way Slack agent socket.' },
+      { sender: 'Hermes (The Brain)', time: '15:43:30', type: 'hermes', text: 'Goal received. Decomposing into 4 execution phases & delegating to OpenClaw via #agent-coder.' }
+    ],
+    '#agent-coder': [
+      { sender: 'Hermes (The Brain)', time: '15:44:00', type: 'hermes', text: '@OpenClaw Run database migrations and generate REST controllers.' },
+      { sender: 'OpenClaw (The Hands)', time: '15:44:20', type: 'openclaw', text: 'Migrations completed successfully. 6 tables created. Build ready!' }
+    ],
+    '#agent-log': [
+      { sender: 'System Audit', time: '15:44:25', type: 'system', text: '[AUDIT] 3-way connection verified: Hermes <-> OpenClaw <-> Slack.' }
+    ]
+  });
+
 
   useEffect(() => {
     fetchBoards();
@@ -566,9 +590,13 @@ function Board() {
           <button className="btn btn-secondary" onClick={() => setShowMemberModal(true)}>
             <User size={16} /> Add Member
           </button>
+          <button className="btn btn-secondary" onClick={() => setShowSlackModal(true)} style={{ borderColor: 'rgba(168, 85, 247, 0.4)', color: '#c084fc', background: 'rgba(168, 85, 247, 0.1)' }}>
+            <Cpu size={16} /> Slack Agent Terminal
+          </button>
           <button className="btn btn-primary" onClick={() => setShowBoardModal(true)}>
             <Plus size={16} /> Create Board
           </button>
+
 
           {/* USER PROFILE DROPDOWN */}
           <div style={{ position: 'relative', marginLeft: '0.5rem' }}>
@@ -1061,8 +1089,88 @@ function Board() {
             </motion.form>
           </div>
         )}
+
+        {/* SLACK MULTI-AGENT TERMINAL MODAL */}
+        {showSlackModal && (
+          <div className="modal-backdrop" onClick={() => setShowSlackModal(false)}>
+            <motion.div 
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+              className="modal-content"
+              style={{ maxWidth: '750px', background: '#0a0b10', border: '1px solid var(--cyan-border)' }}
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="modal-header" style={{ borderBottom: '1px solid var(--glass-border)', paddingBottom: '1rem', marginBottom: '1rem' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                  <div className="ai-logo-box" style={{ background: 'rgba(168, 85, 247, 0.2)', border: '1px solid rgba(168, 85, 247, 0.4)' }}>
+                    <Bot size={20} style={{ color: '#c084fc' }} />
+                  </div>
+                  <div>
+                    <h3 className="modal-title" style={{ color: 'var(--text-white)' }}>Hermes <span style={{ color: 'var(--cyan-glow)' }}>&lt;-&gt;</span> OpenClaw Slack Terminal</h3>
+                    <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>3-Way Interconnected Agent Socket Bus</span>
+                  </div>
+                </div>
+                <button type="button" className="close-btn" onClick={() => setShowSlackModal(false)}>✕</button>
+              </div>
+
+              {/* Status Header */}
+              <div style={{ display: 'flex', gap: '1rem', marginBottom: '1rem' }}>
+                <div style={{ flex: 1, background: 'rgba(255,255,255,0.03)', padding: '0.6rem 0.8rem', borderRadius: '8px', border: '1px solid var(--glass-border)', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                  <div className="pulse-dot-green"></div>
+                  <span style={{ fontSize: '0.75rem', color: 'var(--text-primary)' }}>Hermes (Brain): <strong>Online</strong></span>
+                </div>
+                <div style={{ flex: 1, background: 'rgba(255,255,255,0.03)', padding: '0.6rem 0.8rem', borderRadius: '8px', border: '1px solid var(--glass-border)', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                  <div className="pulse-dot-green"></div>
+                  <span style={{ fontSize: '0.75rem', color: 'var(--text-primary)' }}>OpenClaw (Hands): <strong>Online</strong></span>
+                </div>
+                <div style={{ flex: 1, background: 'rgba(255,255,255,0.03)', padding: '0.6rem 0.8rem', borderRadius: '8px', border: '1px solid var(--glass-border)', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                  <div className="pulse-dot-green"></div>
+                  <span style={{ fontSize: '0.75rem', color: 'var(--text-primary)' }}>Slack Socket: <strong>Connected</strong></span>
+                </div>
+              </div>
+
+              {/* Channel Tabs */}
+              <div className="channel-tabs-container" style={{ marginBottom: '1rem' }}>
+                {['#sprint-main', '#agent-coder', '#agent-log'].map(ch => (
+                  <button 
+                    key={ch}
+                    className={`channel-tab-btn ${activeSlackChannel === ch ? 'active' : ''}`}
+                    onClick={() => setActiveSlackChannel(ch)}
+                  >
+                    <MessageSquare size={14} /> {ch}
+                  </button>
+                ))}
+              </div>
+
+              {/* Console Output */}
+              <div className="slack-terminal-box" style={{ minHeight: '220px' }}>
+                {slackLogs[activeSlackChannel] && slackLogs[activeSlackChannel].map((msg, i) => (
+                  <div key={i} className={`slack-msg-row ${msg.type}`}>
+                    <div style={{ width: '100%' }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.2rem' }}>
+                        <span className="slack-msg-sender" style={{
+                          color: msg.type === 'hermes' ? '#c084fc' : msg.type === 'openclaw' ? '#22d3ee' : msg.type === 'human' ? '#10b981' : '#facc15'
+                        }}>
+                          {msg.sender}
+                        </span>
+                        <span className="slack-msg-time">{msg.time}</span>
+                      </div>
+                      <div className="slack-msg-body">{msg.text}</div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              <div className="modal-actions" style={{ marginTop: '1.25rem' }}>
+                <button type="button" className="btn btn-secondary" onClick={() => setShowSlackModal(false)}>Close Terminal</button>
+              </div>
+            </motion.div>
+          </div>
+        )}
       </AnimatePresence>
     </motion.div>
+
   );
 }
 

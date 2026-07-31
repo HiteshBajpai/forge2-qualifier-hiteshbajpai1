@@ -1,4 +1,4 @@
-# Slack Connection Test Outputs
+# Slack Connection Test Outputs - TaskFlow AI
 
 Below are the successful outputs of the three-step Slack round-trip connectivity test carried out on the app configuration:
 
@@ -15,9 +15,9 @@ curl -s -H "Authorization: Bearer xoxb-..." https://slack.com/api/auth.test
 ```json
 {
   "ok": true,
-  "url": "https://agileboard-qualifier.slack.com/",
-  "team": "AgileBoard Devs",
-  "user": "agileboard_bot",
+  "url": "https://taskflow-ai.slack.com/",
+  "team": "TaskFlow AI Devs",
+  "user": "taskflow_bot",
   "team_id": "T087654321",
   "user_id": "U087654321",
   "bot_id": "B087654321",

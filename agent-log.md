@@ -1,6 +1,7 @@
-# Agent Work Logs - AgileBoard Kanban
+# Agent Work Logs - TaskFlow AI
 
-This log records the unedited conversation history and task execution trace of the two-agent system (Hermes + OpenClaw) during the development of AgileBoard.
+This log records the unedited conversation history and task execution trace of the 3-way interconnected multi-agent system (Hermes + OpenClaw + Slack) during the development of TaskFlow AI.
+
 
 ---
 

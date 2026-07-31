@@ -9,8 +9,19 @@
       "enabled": true,
       "mode": "socket",
       "appToken": { "source": "env", "provider": "default", "id": "SLACK_APP_TOKEN" },
-      "botToken": { "source": "env", "provider": "default", "id": "SLACK_BOT_TOKEN" }
+      "botToken": { "source": "env", "provider": "default", "id": "SLACK_BOT_TOKEN" },
+      "subscribers": {
+        "sprint_main": "#sprint-main",
+        "agent_coder": "#agent-coder",
+        "agent_log": "#agent-log"
+      }
     }
+  },
+  "interconnection": {
+    "parent_agent": "hermes",
+    "listen_channel": "#agent-coder",
+    "report_channel": "#agent-log",
+    "sync_mode": "bidirectional"
   },
   "models": {
     "default": "groq/llama-3.3-70b-versatile",
@@ -28,3 +39,4 @@
     "workspaceDir": "./"
   }
 }
+

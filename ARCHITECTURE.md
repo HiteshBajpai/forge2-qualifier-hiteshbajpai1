@@ -1,16 +1,17 @@
-# System Architecture - AgileBoard Kanban
+# System Architecture - TaskFlow AI Multi-Agent Engine
 
-This document describes the two-agent setup (Brain + Hands) wired through Slack to develop and maintain the AgileBoard application.
+This document describes the 3-way interconnected multi-agent ecosystem (**Hermes [Brain] + OpenClaw [Hands] + Slack Socket Gateway**) engineered to develop, manage, and automate **TaskFlow AI**.
 
 ```mermaid
 graph TD
-    Human[Human/Product Owner] -- Commands in #sprint-main --> Hermes[Hermes - The Brain]
-    Hermes -- Decomposes goals & delegates to --> OpenClaw[OpenClaw - The Hands]
-    OpenClaw -- Writes/Runs code on --> Local[Local Dev Environment]
-    OpenClaw -- Reports status in #agent-coder --> Hermes
-    Hermes -- Posts status reports to --> Human
+    Human[Human / Project Manager - Hitesh Bajpai] -- Commands & Goals in #sprint-main --> Hermes[Hermes - The Brain]
+    Hermes -- Decomposes goals & delegates JSON tasks to --> OpenClaw[OpenClaw - The Hands]
+    OpenClaw -- Executes File I/O, Migrations, Builds on --> Local[Local / Production Dev Environment]
+    OpenClaw -- Reports status & outputs in #agent-coder --> Hermes
+    Hermes -- Posts synthesis & progress reports to --> Human
+    OpenClaw -- Streams raw activity logs & audit traces to --> AgentLog[#agent-log Audit Stream]
     
-    subgraph Slack Channels
+    subgraph Interconnected Slack Channels
         SprintMain[#sprint-main]
         AgentCoder[#agent-coder]
         AgentLog[#agent-log]
@@ -21,50 +22,44 @@ graph TD
     Hermes -.- AgentLog
 ```
 
-## Agent Breakdown & Roles
+## 3-Way Agent Breakdown & Interconnection Scheme
 
-### 1. Hermes (The Brain)
-*   **Role**: Orchestrator, Planner, and Decision Maker.
+### 1. Hermes (The Brain & Orchestrator)
+*   **Role**: Orchestrator, Goal Planner, and Session Memory Keeper.
 *   **Functionality**:
-    *   Maintains context and session memory across runs.
-    *   Decomposes goals provided by the Human in `#sprint-main` into concrete, step-by-step coding tasks.
-    *   Triggers status-report skill (`skills/status-report/SKILL.md`) to report progress.
-    *   Delegates coding execution to OpenClaw via `#agent-coder`.
+    *   Subscribes to `#sprint-main` Slack channel.
+    *   Decomposes human prompts into structured subtasks with precise technical contracts.
+    *   Dispatches tasks directly to OpenClaw via `#agent-coder`.
+    *   Synthesizes execution updates and posts human-friendly progress reports back to `#sprint-main`.
 
-### 2. OpenClaw (The Hands)
-*   **Role**: Coding Agent and Executor.
+### 2. OpenClaw (The Hands & Code Executor)
+*   **Role**: Autonomous Code Executor and Environment Operator.
 *   **Functionality**:
-    *   Subscribes to `#agent-coder` for assignments.
-    *   Performs file I/O, installs dependencies, runs database migrations, compiles production bundles, and launches dev servers.
-    *   Reports task completion status and errors directly back to `#agent-coder`.
+    *   Subscribes to `#agent-coder` for work orders from Hermes.
+    *   Executes filesystem mutations, database migrations (`php artisan migrate`), frontend compilation (`npm run build`), and API route wiring.
+    *   Streams structured execution traces and test outputs directly to `#agent-log` and reports status back to Hermes in `#agent-coder`.
+
+### 3. Slack Gateway (Socket Mode Communications Hub)
+*   **Role**: Real-Time Bidirectional Event Bus & Audit Trail.
+*   **Channel Breakdown**:
+    *   **`#sprint-main`**: Human $\leftrightarrow$ Hermes (High-level goal approvals and sprint status summaries).
+    *   **`#agent-coder`**: Hermes $\leftrightarrow$ OpenClaw (Task delegation, JSON payloads, execution confirmation).
+    *   **`#agent-log`**: System Event Stream (Raw command outputs, error tracebacks, cron jobs).
 
 ---
 
-## Slack Channel Scheme
+## Model Routing & Fallback Philosophy
 
-*   **`#sprint-main`**:
-    *   *Purpose*: High-level direction and plan approvals.
-    *   *Actors*: Human $\leftrightarrow$ Hermes.
-*   **`#agent-coder`**:
-    *   *Purpose*: Work assignment and progress reporting.
-    *   *Actors*: Hermes $\leftrightarrow$ OpenClaw.
-*   **`#agent-log`**:
-    *   *Purpose*: Raw activities log and audit trail.
-    *   *Actors*: Event notifications, system logs, autonomous runs (cron schedules).
+We enforce the **"Strong Brain, Fast Hands"** routing model across our connected agents:
 
----
-
-## Model Routing
-
-We configure routing using the "Strong Brain, Fast Hands" philosophy:
-
-| Agent | Task Type | Model Used | Provider | Rationale |
+| Agent | Role / Task Type | Primary Model | Provider | Rationale |
 |---|---|---|---|---|
-| **Hermes** | Planning / Memory | `gemini-2.5-flash` / `openai/gpt-oss-120b` | Gemini / Groq | Requires deep reasoning, broad context retrieval, and low rate of hallucination to split goals into distinct steps. |
-| **OpenClaw** | Code Execution | `ollama/qwen2.5-coder` / `llama-3.3-70b-versatile` | Ollama (Local) / Groq | Requires highly optimized coding capabilities. Running qwen2.5-coder locally provides unlimited execution context and avoids cloud API rate limits (TPM/RPM limits on free tiers). |
+| **Hermes** | Brain / Planning & Memory | `gemini-2.5-flash` / `openai/gpt-oss-120b` | Google Gemini / Groq | Low hallucination rate, broad reasoning capability, and high context capacity. |
+| **OpenClaw** | Hands / Code Execution | `groq/llama-3.3-70b-versatile` / `qwen2.5-coder` | Groq / Ollama (Local) | Optimized for high-throughput code synthesis and zero-latency shell execution. |
 
-### Fallback Ladder (on 429 / Rate Limits)
-1. **Groq** `openai/gpt-oss-120b` (Primary Planning)
-2. **Google Gemini** `gemini-2.5-flash` (Secondary Planning)
-3. **Cerebras / OpenRouter** (Cloud Executing)
-4. **Ollama** `qwen2.5-coder` (Local execution fallback, unlimited tokens)
+### Fallback Ladder (Automatic Rate-Limit / 429 Recovery)
+1. **Google Gemini** `gemini-2.5-flash` (Primary Planning & Reasoning)
+2. **Groq Cloud** `openai/gpt-oss-120b` (Secondary Planning)
+3. **Groq Cloud** `llama-3.3-70b-versatile` (Primary Execution)
+4. **Ollama Local** `qwen2.5-coder` (Local execution fallback with unlimited tokens)
+

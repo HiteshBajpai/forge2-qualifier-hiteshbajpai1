@@ -8,10 +8,19 @@ model:
 gateway:
   slack:
     enabled: true
+    mode: "socket"
+    appToken: { source: "env", provider: "default", id: "SLACK_APP_TOKEN" }
+    botToken: { source: "env", provider: "default", id: "SLACK_BOT_TOKEN" }
     channels:
       sprint_main: "#sprint-main"
       agent_coder: "#agent-coder"
       agent_log: "#agent-log"
+
+interconnection:
+  target_agent: "openclaw"
+  delegation_channel: "#agent-coder"
+  status_channel: "#agent-log"
+  auto_dispatch: true
 
 skills:
   directory: "./skills"
@@ -21,3 +30,4 @@ skills:
 memory:
   enabled: true
   path: "./memory"
+

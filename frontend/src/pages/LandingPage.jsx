@@ -28,6 +28,71 @@ export default function LandingPage() {
   const navigate = useNavigate();
   const [openFaq, setOpenFaq] = useState(0);
   const [contactSubmitted, setContactSubmitted] = useState(false);
+  const [activeChannel, setActiveChannel] = useState('#sprint-main');
+  const [isSimulating, setIsSimulating] = useState(false);
+  const [agentLogs, setAgentLogs] = useState({
+    '#sprint-main': [
+      { sender: 'Hitesh Bajpai (PM)', time: '15:43:00', type: 'human', text: 'Plan & scaffold TaskFlow AI master board with full Laravel API endpoints.' },
+      { sender: 'Hermes (The Brain)', time: '15:43:30', type: 'hermes', text: 'Goal accepted. Decomposing into 4 phases: DB migrations, Eloquent models, REST controllers, React Vite frontend. Dispatching execution orders to OpenClaw via #agent-coder.' }
+    ],
+    '#agent-coder': [
+      { sender: 'Hermes (The Brain)', time: '15:44:00', type: 'hermes', text: '@OpenClaw Scaffold models & migrations for Board, BoardList, Card, Member, Tag. Execute php artisan migrate.' },
+      { sender: 'OpenClaw (The Hands)', time: '15:44:20', type: 'openclaw', text: 'Scaffolded models & migrations. Applied 6 migrations successfully (9.94ms DONE). Controller REST routes wired.' }
+    ],
+    '#agent-log': [
+      { sender: 'System Audit', time: '15:44:25', type: 'system', text: '[AUDIT] 2026_07_16_105512_create_boards_table.php ... DONE' },
+      { sender: 'System Audit', time: '15:56:22', type: 'system', text: '[AUDIT] routes/api.php published. Allowed CORS origins [*].' }
+    ]
+  });
+
+  const handleSimulateTask = () => {
+    if (isSimulating) return;
+    setIsSimulating(true);
+    const timestamp = new Date().toLocaleTimeString();
+    
+    // Add prompt in #sprint-main
+    setTimeout(() => {
+      setAgentLogs(prev => ({
+        ...prev,
+        '#sprint-main': [
+          ...prev['#sprint-main'],
+          { sender: 'Hitesh Bajpai (PM)', time: timestamp, type: 'human', text: 'Connect Hermes, OpenClaw, and Slack 3-way handshake in TaskFlow AI.' }
+        ]
+      }));
+    }, 500);
+
+    // Hermes responds in #sprint-main & #agent-coder
+    setTimeout(() => {
+      setAgentLogs(prev => ({
+        ...prev,
+        '#sprint-main': [
+          ...prev['#sprint-main'],
+          { sender: 'Hermes (The Brain)', time: timestamp, type: 'hermes', text: '3-Way connection request acknowledged. Dispatching socket configuration to OpenClaw via #agent-coder.' }
+        ],
+        '#agent-coder': [
+          ...prev['#agent-coder'],
+          { sender: 'Hermes (The Brain)', time: timestamp, type: 'hermes', text: '@OpenClaw Update openclaw.json & hermes-config.yaml to establish bidirectional Slack socket subscribers.' }
+        ]
+      }));
+    }, 1500);
+
+    // OpenClaw executes in #agent-coder & streams to #agent-log
+    setTimeout(() => {
+      setAgentLogs(prev => ({
+        ...prev,
+        '#agent-coder': [
+          ...prev['#agent-coder'],
+          { sender: 'OpenClaw (The Hands)', time: timestamp, type: 'openclaw', text: 'Configurations updated! Executed node scripts/agent-connector.js. Handshake verified 100% SUCCESS.' }
+        ],
+        '#agent-log': [
+          ...prev['#agent-log'],
+          { sender: 'System Audit', time: timestamp, type: 'system', text: '[SUCCESS] Hermes <-> OpenClaw <-> Slack 3-Way Interconnection Verified.' }
+        ]
+      }));
+      setIsSimulating(false);
+    }, 3000);
+  };
+
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -265,6 +330,125 @@ export default function LandingPage() {
               <p>Real-time analytics track project completion metrics and highlight overdue items before they impact deadlines.</p>
             </motion.div>
           </motion.div>
+        </section>
+
+        {/* SECTION: INTERCONNECTED MULTI-AGENT ENGINE */}
+        <section id="agents" style={{ padding: '3rem 0' }}>
+
+          <div className="section-header">
+            <span className="section-tag" style={{ background: 'rgba(168, 85, 247, 0.15)', color: '#c084fc', borderColor: 'rgba(168, 85, 247, 0.3)' }}>
+              3-Way Interconnected Architecture
+            </span>
+            <h2 className="section-title">Hermes & OpenClaw Connected via Slack</h2>
+            <p className="section-subtitle">
+              Hermes (The Brain) decomposes goals and delegates execution to OpenClaw (The Hands) through interconnected Slack socket gateways.
+            </p>
+          </div>
+
+          <div className="agent-connector-wrapper">
+            <div className="agent-nodes-grid">
+              {/* NODE 1: HERMES */}
+              <div className="agent-node-card active">
+                <div className="agent-node-header">
+                  <span className="agent-node-badge badge-brain">
+                    <Sparkles size={12} /> The Brain
+                  </span>
+                  <div className="pulse-dot-green" title="Connected"></div>
+                </div>
+                <div className="agent-node-title">
+                  <Bot size={22} className="text-purple-glow" style={{ color: '#c084fc' }} /> Hermes Agent
+                </div>
+                <p className="agent-node-desc">
+                  Planning & Reasoning Engine. Maintains session context, decomposes user goals into structured contracts, and triggers execution.
+                </p>
+                <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', background: 'rgba(0,0,0,0.3)', padding: '0.4rem 0.6rem', borderRadius: '6px' }}>
+                  Model: <span style={{ color: 'var(--cyan-glow)' }}>Gemini 2.5 Flash / Groq</span>
+                </div>
+              </div>
+
+              {/* NODE 2: SLACK HUB */}
+              <div className="agent-node-card active" style={{ borderColor: 'rgba(234, 179, 8, 0.5)' }}>
+                <div className="agent-node-header">
+                  <span className="agent-node-badge badge-slack">
+                    <Activity size={12} /> Socket Gateway
+                  </span>
+                  <div className="pulse-dot-green" title="Socket Active"></div>
+                </div>
+                <div className="agent-node-title">
+                  <MessageSquare size={22} style={{ color: '#facc15' }} /> Slack Channels
+                </div>
+                <p className="agent-node-desc">
+                  Real-time event bus routing messages across <code>#sprint-main</code>, <code>#agent-coder</code>, and <code>#agent-log</code>.
+                </p>
+                <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', background: 'rgba(0,0,0,0.3)', padding: '0.4rem 0.6rem', borderRadius: '6px' }}>
+                  Mode: <span style={{ color: '#facc15' }}>Socket Mode (xoxb/xapp)</span>
+                </div>
+              </div>
+
+              {/* NODE 3: OPENCLAW */}
+              <div className="agent-node-card active">
+                <div className="agent-node-header">
+                  <span className="agent-node-badge badge-hands">
+                    <Code size={12} /> The Hands
+                  </span>
+                  <div className="pulse-dot-green" title="Connected"></div>
+                </div>
+                <div className="agent-node-title">
+                  <Cpu size={22} className="text-cyan-glow" /> OpenClaw Agent
+                </div>
+                <p className="agent-node-desc">
+                  Execution & Coding Engine. Runs migrations, compiles React Vite bundles, wires APIs, and streams execution trace logs.
+                </p>
+                <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', background: 'rgba(0,0,0,0.3)', padding: '0.4rem 0.6rem', borderRadius: '6px' }}>
+                  Model: <span style={{ color: 'var(--cyan-glow)' }}>Groq / Ollama Qwen2.5</span>
+                </div>
+              </div>
+            </div>
+
+            {/* LIVE INTERACTIVE SLACK CHANNEL VIEWER */}
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem', flexWrap: 'wrap', gap: '1rem' }}>
+              <div className="channel-tabs-container" style={{ margin: 0 }}>
+                {['#sprint-main', '#agent-coder', '#agent-log'].map(ch => (
+                  <button 
+                    key={ch}
+                    className={`channel-tab-btn ${activeChannel === ch ? 'active' : ''}`}
+                    onClick={() => setActiveChannel(ch)}
+                  >
+                    <MessageSquare size={14} /> {ch}
+                  </button>
+                ))}
+              </div>
+
+              <button 
+                className="btn btn-secondary btn-small"
+                onClick={handleSimulateTask}
+                disabled={isSimulating}
+                style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', background: 'rgba(34, 211, 238, 0.15)', borderColor: 'var(--cyan-bright)' }}
+              >
+                <Zap size={14} className={isSimulating ? 'spin' : ''} /> 
+                {isSimulating ? 'Executing 3-Way Handshake...' : 'Simulate 3-Way Agent Task Run'}
+              </button>
+            </div>
+
+            {/* TERMINAL BOX */}
+            <div className="slack-terminal-box">
+              {agentLogs[activeChannel] && agentLogs[activeChannel].map((msg, i) => (
+                <div key={i} className={`slack-msg-row ${msg.type}`}>
+                  <div className="slack-msg-content" style={{ width: '100%' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.2rem' }}>
+                      <span className="slack-msg-sender" style={{
+                        color: msg.type === 'hermes' ? '#c084fc' : msg.type === 'openclaw' ? '#22d3ee' : msg.type === 'human' ? '#10b981' : '#facc15'
+                      }}>
+                        {msg.sender}
+                      </span>
+                      <span className="slack-msg-time">{msg.time}</span>
+                    </div>
+                    <div className="slack-msg-body">{msg.text}</div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
         </section>
 
         {/* SECTION 2: AI POWERED FEATURES */}

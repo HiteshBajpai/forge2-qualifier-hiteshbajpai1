@@ -1558,3 +1558,203 @@ body {
   height: 10px;
   border-radius: 50%;
 }
+
+/* ==========================================================================
+   INTERCONNECTED MULTI-AGENT ENGINE (HERMES <-> OPENCLAW <-> SLACK)
+   ========================================================================== */
+.agent-connector-wrapper {
+  background: rgba(10, 11, 16, 0.85);
+  border: 1px solid var(--cyan-border);
+  border-radius: 20px;
+  padding: 2rem;
+  backdrop-filter: var(--glass-blur);
+  box-shadow: var(--shadow-cyan-lg);
+  margin-top: 2rem;
+}
+
+.agent-nodes-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+  position: relative;
+  margin-bottom: 2rem;
+}
+
+@media (max-width: 900px) {
+  .agent-nodes-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.agent-node-card {
+  background: var(--bg-navy-card);
+  border: 1px solid var(--glass-border);
+  border-radius: 16px;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+  position: relative;
+  transition: all 0.3s ease;
+}
+
+.agent-node-card.active {
+  border-color: var(--cyan-bright);
+  box-shadow: 0 0 20px rgba(34, 211, 238, 0.25);
+  background: linear-gradient(180deg, rgba(34, 211, 238, 0.08), rgba(10, 11, 16, 0.9));
+}
+
+.agent-node-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.agent-node-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 0.25rem 0.65rem;
+  border-radius: 999px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.badge-brain {
+  background: rgba(168, 85, 247, 0.2);
+  color: #c084fc;
+  border: 1px solid rgba(168, 85, 247, 0.4);
+}
+
+.badge-hands {
+  background: rgba(34, 211, 238, 0.2);
+  color: #22d3ee;
+  border: 1px solid rgba(34, 211, 238, 0.4);
+}
+
+.badge-slack {
+  background: rgba(234, 179, 8, 0.2);
+  color: #facc15;
+  border: 1px solid rgba(234, 179, 8, 0.4);
+}
+
+.agent-node-title {
+  font-family: var(--font-display);
+  font-size: 1.2rem;
+  font-weight: 800;
+  color: var(--text-white);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.agent-node-desc {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  line-height: 1.4;
+}
+
+.channel-tabs-container {
+  background: var(--bg-navy-dark);
+  border-radius: 12px;
+  padding: 0.5rem;
+  border: 1px solid var(--glass-border);
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1.25rem;
+  overflow-x: auto;
+}
+
+.channel-tab-btn {
+  background: transparent;
+  border: 1px solid transparent;
+  color: var(--text-secondary);
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.channel-tab-btn.active {
+  background: rgba(34, 211, 238, 0.15);
+  border-color: var(--cyan-bright);
+  color: var(--cyan-glow);
+}
+
+.slack-terminal-box {
+  background: #030712;
+  border: 1px solid var(--cyan-border);
+  border-radius: 14px;
+  padding: 1.25rem;
+  font-family: 'Fira Code', monospace, sans-serif;
+  font-size: 0.85rem;
+  max-height: 320px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.slack-msg-row {
+  display: flex;
+  gap: 0.75rem;
+  padding: 0.6rem;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.03);
+  border-left: 3px solid var(--cyan-bright);
+}
+
+.slack-msg-row.hermes {
+  border-left-color: #a855f7;
+}
+
+.slack-msg-row.openclaw {
+  border-left-color: #22d3ee;
+}
+
+.slack-msg-row.human {
+  border-left-color: #10b981;
+}
+
+.slack-msg-sender {
+  font-weight: 700;
+  font-size: 0.8rem;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.slack-msg-time {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+}
+
+.slack-msg-body {
+  color: var(--text-primary);
+  margin-top: 0.25rem;
+  line-height: 1.4;
+}
+
+.pulse-dot-green {
+  width: 8px;
+  height: 8px;
+  background: #10b981;
+  border-radius: 50%;
+  box-shadow: 0 0 10px #10b981;
+  animation: pulseGreen 1.5s infinite;
+}
+
+@keyframes pulseGreen {
+  0% { transform: scale(0.95); opacity: 0.8; }
+  50% { transform: scale(1.25); opacity: 1; }
+  100% { transform: scale(0.95); opacity: 0.8; }
+}
+
