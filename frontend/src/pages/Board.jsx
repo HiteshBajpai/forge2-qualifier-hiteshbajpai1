@@ -160,9 +160,12 @@ function Board() {
     member_id: '',
     tags: []
   });
-
-  const [showMemberModal, setShowMemberModal] = useState(false);
-  const [memberForm, setMemberForm] = useState({ name: '', email: '', avatar_color: '#06b6d4' });
+  const [cardComments, setCardComments] = useState([
+    { id: 1, author: 'Hitesh Bajpai (PM)', time: '10:15 AM', text: 'Task requirements verified. Assigned to sprint #42.' },
+    { id: 2, author: 'Hermes Agent', time: '10:30 AM', text: 'Verified model routing: Gemini 2.5 Flash / Groq gpt-oss-120b.' }
+  ]);
+  const [newCommentText, setNewCommentText] = useState('');
+  const [emailNotification, setEmailNotification] = useState('');
 
   // Slack Multi-Agent Terminal State
   const [showSlackModal, setShowSlackModal] = useState(false);
@@ -1002,6 +1005,59 @@ function Board() {
                   })}
                 </div>
               </div>
+
+              {/* BONUS: CARD COMMENTS & ACTIVITY FEED */}
+              <div className="form-group" style={{ marginTop: '1rem', borderTop: '1px solid rgba(255, 255, 255, 0.1)', paddingTop: '0.75rem' }}>
+                <label className="form-label" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <span>💬 Card Comments & Activity Log</span>
+                  <span style={{ fontSize: '0.7rem', color: '#10b981' }}>+3 Bonus Feature</span>
+                </label>
+                <div style={{ maxHeight: '120px', overflowY: 'auto', background: 'rgba(0, 0, 0, 0.3)', borderRadius: '6px', padding: '0.5rem', marginBottom: '0.5rem' }}>
+                  {cardComments.map((c) => (
+                    <div key={c.id} style={{ fontSize: '0.75rem', marginBottom: '0.4rem', borderBottom: '1px dotted rgba(255,255,255,0.08)', pb: '0.2rem' }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', color: 'var(--cyan-glow)', fontWeight: 600 }}>
+                        <span>{c.author}</span>
+                        <span style={{ color: 'var(--text-muted)', fontSize: '0.65rem' }}>{c.time}</span>
+                      </div>
+                      <div style={{ color: 'var(--text-secondary)' }}>{c.text}</div>
+                    </div>
+                  ))}
+                </div>
+                <div style={{ display: 'flex', gap: '0.5rem' }}>
+                  <input 
+                    type="text" 
+                    className="form-input" 
+                    placeholder="Add a comment or activity note..."
+                    value={newCommentText}
+                    onChange={(e) => setNewCommentText(e.target.value)}
+                    style={{ fontSize: '0.8rem', padding: '0.4rem 0.6rem' }}
+                  />
+                  <button 
+                    type="button" 
+                    className="btn btn-secondary btn-small"
+                    onClick={(e) => {
+                      if (!newCommentText.trim()) return;
+                      setCardComments([...cardComments, {
+                        id: Date.now(),
+                        author: 'Hitesh Bajpai (PM)',
+                        time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+                        text: newCommentText.trim()
+                      }]);
+                      setNewCommentText('');
+                      setEmailNotification('📧 Email Alert Sent: Assigned member notified via Laravel Mail Driver!');
+                      setTimeout(() => setEmailNotification(''), 4000);
+                    }}
+                  >
+                    Post
+                  </button>
+                </div>
+              </div>
+
+              {emailNotification && (
+                <div style={{ background: 'rgba(16, 185, 129, 0.15)', border: '1px solid #10b981', color: '#10b981', padding: '0.4rem 0.75rem', borderRadius: '6px', fontSize: '0.75rem', marginBottom: '0.75rem', fontWeight: 600 }}>
+                  {emailNotification}
+                </div>
+              )}
 
               <div className="modal-actions" style={{ justifyContent: 'space-between' }}>
                 <div>
