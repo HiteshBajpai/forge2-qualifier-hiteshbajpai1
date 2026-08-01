@@ -3,23 +3,35 @@
 This document describes the 3-way interconnected multi-agent ecosystem (**Hermes [Brain] + OpenClaw [Hands] + Slack Socket Gateway**) engineered to develop, manage, and automate **TaskFlow AI**.
 
 ```mermaid
-graph TD
-    Human[Human / Project Manager - Hitesh Bajpai] -- Commands & Goals in #sprint-main --> Hermes[Hermes - The Brain]
-    Hermes -- Decomposes goals & delegates JSON tasks to --> OpenClaw[OpenClaw - The Hands]
-    OpenClaw -- Executes File I/O, Migrations, Builds on --> Local[Local / Production Dev Environment]
-    OpenClaw -- Reports status & outputs in #agent-coder --> Hermes
-    Hermes -- Posts synthesis & progress reports to --> Human
-    OpenClaw -- Streams raw activity logs & audit traces to --> AgentLog[#agent-log Audit Stream]
-    
-    subgraph Interconnected Slack Channels
-        SprintMain[#sprint-main]
-        AgentCoder[#agent-coder]
-        AgentLog[#agent-log]
+flowchart TD
+    subgraph HumanLayer ["👤 User Layer"]
+        Human["<b>Hitesh Bajpai</b><br/>(Project Manager / Lead)"]
     end
-    
-    Hermes -.- SprintMain
-    OpenClaw -.- AgentCoder
-    Hermes -.- AgentLog
+
+    subgraph SlackBus ["💬 Slack Socket Gateway (Event Bus)"]
+        direction LR
+        C1["<b>#sprint-main</b><br/>Human ↔ Hermes"]
+        C2["<b>#agent-coder</b><br/>Hermes ↔ OpenClaw"]
+        C3["<b>#agent-log</b><br/>System Audit Stream"]
+    end
+
+    subgraph AgentCore ["🤖 Interconnected Multi-Agent Core"]
+        Hermes["🧠 <b>Hermes (The Brain)</b><br/>Model: Gemini 2.5 / Groq gpt-oss-120b<br/><i>Goal Decomposition & Task Dispatch</i>"]
+        OpenClaw["🛠️ <b>OpenClaw (The Hands)</b><br/>Model: Qwen 2.5 / Groq Llama 3.3<br/><i>Code Synthesis & Local Execution</i>"]
+    end
+
+    subgraph AppLayer ["⚡ Application Environment"]
+        App["<b>TaskFlow AI Application</b><br/>React 19 (Vite) + Laravel 11 (SQLite REST API)"]
+    end
+
+    Human -->|"1. Send Sprint Goal"| C1
+    C1 -->|"2. Trigger Goal Planner"| Hermes
+    Hermes -->|"3. Dispatch Subtasks"| C2
+    C2 -->|"4. Receive Work Orders"| OpenClaw
+    OpenClaw -->|"5. Execute Code & Migrations"| App
+    OpenClaw -->|"6. Stream Execution Logs"| C3
+    OpenClaw -->|"7. Report Completion"| C2
+    Hermes -->|"8. Post Progress Summary"| C1
 ```
 
 ## 3-Way Agent Breakdown & Interconnection Scheme
