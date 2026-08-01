@@ -19,6 +19,8 @@ import {
   Activity,
   Code,
   Share2,
+  Globe,
+  Flame
 } from 'lucide-react';
 import heroImage from '../assets/hero.png';
 
