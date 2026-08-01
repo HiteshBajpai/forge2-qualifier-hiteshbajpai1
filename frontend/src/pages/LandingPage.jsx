@@ -222,7 +222,12 @@ export default function LandingPage() {
               </div>
             </div>
 
-            <div className="dashboard-illustration-card" style={{ padding: '8px', overflow: 'hidden' }}>
+            <div 
+              className="dashboard-illustration-card" 
+              onClick={() => navigate('/board')}
+              style={{ padding: '8px', overflow: 'hidden', cursor: 'pointer', position: 'relative' }}
+              title="Click to launch interactive Kanban Board"
+            >
               <div className="illustr-header" style={{ marginBottom: '8px' }}>
                 <div className="illustr-dots">
                   <div className="illustr-dot dot-red"></div>
@@ -230,7 +235,7 @@ export default function LandingPage() {
                   <div className="illustr-dot dot-green"></div>
                 </div>
                 <div style={{ fontSize: '0.75rem', color: 'var(--cyan-bright)', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '4px' }}>
-                  <Activity size={12} /> Active AI Sprint Board • Hitesh Bajpai
+                  <Activity size={12} /> Active AI Sprint Board • Click to Open Dashboard
                 </div>
               </div>
 
@@ -240,6 +245,24 @@ export default function LandingPage() {
                   alt="TaskFlow AI Frontend Kanban Board" 
                   style={{ width: '100%', height: 'auto', display: 'block', borderRadius: '8px', objectFit: 'cover' }} 
                 />
+                <div style={{ 
+                  position: 'absolute', 
+                  bottom: '12px', 
+                  right: '12px', 
+                  background: 'rgba(6, 182, 212, 0.95)', 
+                  color: '#030712', 
+                  padding: '6px 14px', 
+                  borderRadius: '20px', 
+                  fontWeight: 800, 
+                  fontSize: '0.8rem', 
+                  display: 'flex', 
+                  alignItems: 'center', 
+                  gap: '6px', 
+                  boxShadow: '0 4px 15px rgba(6,182,212,0.5)', 
+                  backdropFilter: 'blur(8px)' 
+                }}>
+                  Launch Live Board <ArrowRight size={14} />
+                </div>
               </div>
             </div>
           </motion.div>
@@ -804,7 +827,6 @@ export default function LandingPage() {
           <div className="footer-tech">Powered by React, Vite & Laravel</div>
           <div className="footer-copy">© 2026 TaskFlow AI. All Rights Reserved.</div>
         </div>
-q
       </footer>
     </div>
   );
