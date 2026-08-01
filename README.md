@@ -1,55 +1,73 @@
 # TaskFlow AI - Intelligent Project & Task Management
 
-TaskFlow AI is a modern, high-performance Kanban project management application built with React 19 (Vite) and Laravel. Designed & Developed by **Hitesh Bajpai** (Project Manager).
+TaskFlow AI is a modern, high-performance Kanban project management application built with **React 19 (Vite)**, **Glassmorphic Custom CSS**, and **Laravel REST API**. Designed & Developed by **Hitesh Bajpai** (Project Manager / Systems Lead).
 
 ---
 
-## 🚀 Live Application & Video Evidence
+## 🚀 Submission & Live Verification Links
 
 - 🌐 **Live Web Application**: [https://forge2-qualifier-hiteshbajpai1.vercel.app/](https://forge2-qualifier-hiteshbajpai1.vercel.app/)
-- 🎥 **Walkthrough Evidence Video (Media Direct Stream)**: [Click to Play / Download Video](https://media.githubusercontent.com/media/HiteshBajpai/forge2-qualifier-hiteshbajpai1/main/walkthrough%20evidence/walkthrough%20evidence%20.mp4)
-- 📥 **Alternative Download Link**: [Download MP4 Video](https://github.com/HiteshBajpai/forge2-qualifier-hiteshbajpai1/raw/main/walkthrough%20evidence/walkthrough%20evidence%20.mp4)
+- 💻 **Public GitHub Repository**: [https://github.com/HiteshBajpai/forge2-qualifier-hiteshbajpai1](https://github.com/HiteshBajpai/forge2-qualifier-hiteshbajpai1)
+- 📦 **Evidence Directory**: [`/evidence/`](https://github.com/HiteshBajpai/forge2-qualifier-hiteshbajpai1/tree/main/evidence)
+- 🎥 **Walkthrough Video Recording**: [`evidence/walkthrough_evidence.mp4`](https://github.com/HiteshBajpai/forge2-qualifier-hiteshbajpai1/raw/main/evidence/walkthrough_evidence.mp4)
+- 📜 **Agent Work Log**: [`agent-log.md`](https://github.com/HiteshBajpai/forge2-qualifier-hiteshbajpai1/blob/main/agent-log.md)
+- 💬 **Slack Integration Export**: [`slack-export/slack_test_output.md`](https://github.com/HiteshBajpai/forge2-qualifier-hiteshbajpai1/blob/main/slack-export/slack_test_output.md)
+- 🎯 **Custom Skill**: [`skills/status-report/SKILL.md`](https://github.com/HiteshBajpai/forge2-qualifier-hiteshbajpai1/blob/main/skills/status-report/SKILL.md)
 
 ---
 
-## ⚡ Core Features
+## 🤖 Multi-Agent Architecture & Free Models Used
 
--   **AI-Powered Project Workspaces**: Create, manage, switch, and delete project boards effortlessly.
--   **Structured Swimlane Columns**: Real-time Kanban swimlanes (`Backlog`, `In Progress`, `Review & QA`, `Completed`).
--   **Interactive Drag & Drop**: Smooth HTML5 drag-and-drop mechanics across columns.
--   **Task Cards & Due Dates**: Full task description, assignees, categorization tags, and overdue alerts.
--   **User Profile & Member Management**: Hitesh Bajpai Project Manager profile dropdown and team member assignment.
--   **Smart Demo Workspace Seeder**: 1-click initialization with sample boards, tasks, tags, and team members.
+TaskFlow AI was architected and built using a 3-way interconnected multi-agent engine:
+1. **Hermes (The Brain / Orchestrator)**: High-level goal planning, subtask decomposition, and progress reporting in Slack `#sprint-main`.
+2. **OpenClaw (The Hands / Executor)**: Code generation, Laravel migrations, API route wiring, and React Vite builds.
+3. **Slack Socket Gateway**: Interconnected channel bus routing real-time events across `#sprint-main`, `#agent-coder`, and `#agent-log`.
 
----
-
-## 🛠 Tech Stack
-
--   **Frontend**: React 19 (Vite), Glassmorphic Custom CSS, Framer Motion animations.
--   **Backend**: Laravel (PHP 8.3), SQLite Database, Eloquent ORM, REST APIs.
--   **Deployment**: Vercel (Frontend), Render / Local PHP (Backend).
+### Free Models & Model Routing Rationale:
+- **Groq `gpt-oss-120b` / Google `gemini-2.5-flash`**: Primary reasoning models for Hermes (The Brain) for subtask decomposition and zero hallucination planning.
+- **Ollama `qwen2.5-coder` / Groq `llama-3.3-70b-versatile`**: Primary execution models for OpenClaw (The Hands) for rapid code synthesis, syntax verification, and local offline fallback execution.
 
 ---
 
-## 💻 Local Setup Instructions
+## ⚡ Key Features & What Works
+
+- ✅ **Smart Kanban Swimlanes**: Drag & drop tasks across `Backlog`, `In Progress`, `Review & QA`, and `Completed`.
+- ✅ **Dynamic Board & List Management**: Create, edit, switch, and delete boards and custom lists.
+- ✅ **Task Cards & Overdue Alerts**: Add tags, set assignees (Hitesh Bajpai), due dates, and visual priority badges.
+- ✅ **1-Click Smart Workspace Seeder**: Instant demo board initialization.
+- ✅ **Interconnected Agent Engine**: Real-time multi-agent communication via Slack Socket Mode.
+
+### What Was Cut / Future Enhancements:
+- Local SQLite API operates on local development environment; production Vercel frontend includes standalone mock/client-side fallback mode for cloud evaluation without backend dependencies.
+
+---
+
+## 💻 Running Locally
 
 ```bash
 # 1. Install & Build Frontend
 cd frontend
 npm install
-npm run build
 npm run dev
 
-# 2. Run Backend (Optional)
+# 2. Run Backend API (Optional)
 cd ../backend
 php artisan migrate
 php artisan serve
+
+# 3. Test Multi-Agent Connector (Optional)
+cd ..
+node scripts/agent-connector.js
 ```
 
 ---
 
-## 👤 Credits & Author
+## 👤 Submitter Info & Credits
 
-- **Project Manager / Developer**: Hitesh Bajpai (`hitesh@taskflow.ai`)
-- **Application Name**: TaskFlow AI
+- **Full Name**: Hitesh Bajpai
+- **Email**: `hiteshbajpai30@gmail.com`
+- **WhatsApp / Phone**: 8840797587
+- **Institution**: PSIT COLLEGE OF ENGINEERING
+- **Role**: Project Manager & Lead Developer
 - **License**: MIT
+
