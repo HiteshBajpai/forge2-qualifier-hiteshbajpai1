@@ -19,9 +19,10 @@ import {
   Activity,
   Code,
   Share2,
-  Globe,
-  Flame
 } from 'lucide-react';
+import heroImage from '../assets/hero.png';
+
+
 
 
 export default function LandingPage() {
@@ -219,63 +220,24 @@ export default function LandingPage() {
               </div>
             </div>
 
-            <div className="dashboard-illustration-card">
-              <div className="illustr-header">
+            <div className="dashboard-illustration-card" style={{ padding: '8px', overflow: 'hidden' }}>
+              <div className="illustr-header" style={{ marginBottom: '8px' }}>
                 <div className="illustr-dots">
                   <div className="illustr-dot dot-red"></div>
                   <div className="illustr-dot dot-yellow"></div>
                   <div className="illustr-dot dot-green"></div>
                 </div>
                 <div style={{ fontSize: '0.75rem', color: 'var(--cyan-bright)', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '4px' }}>
-                  <Activity size={12} /> Active AI Sprint #42
+                  <Activity size={12} /> Active AI Sprint Board • Hitesh Bajpai
                 </div>
               </div>
 
-              <div className="illustr-grid">
-                <div className="illustr-column">
-                  <div className="illustr-col-header">
-                    <span>Backlog</span>
-                    <span>3</span>
-                  </div>
-                  <div className="illustr-mini-card">
-                    <div className="illustr-mini-card-title">Setup OAuth2 Provider</div>
-                    <span className="illustr-mini-card-tag">Backend</span>
-                  </div>
-                  <div className="illustr-mini-card">
-                    <div className="illustr-mini-card-title">Dark Mode Theme Spec</div>
-                    <span className="illustr-mini-card-tag">UI/UX</span>
-                  </div>
-                </div>
-
-                <div className="illustr-column" style={{ borderTop: '2px solid var(--cyan-bright)' }}>
-                  <div className="illustr-col-header">
-                    <span>In Progress</span>
-                    <span>2</span>
-                  </div>
-                  <div className="illustr-mini-card" style={{ borderColor: 'var(--cyan-bright)', background: 'rgba(34, 211, 238, 0.08)' }}>
-                    <div className="illustr-mini-card-title" style={{ color: 'var(--cyan-glow)' }}>AI Workflow Sync</div>
-                    <span className="illustr-mini-card-tag" style={{ background: 'var(--cyan-bright)', color: '#030712' }}>Active Agent</span>
-                  </div>
-                  <div className="illustr-mini-card">
-                    <div className="illustr-mini-card-title">Laravel Rest API</div>
-                    <span className="illustr-mini-card-tag">API</span>
-                  </div>
-                </div>
-
-                <div className="illustr-column">
-                  <div className="illustr-col-header">
-                    <span>Completed</span>
-                    <span>5</span>
-                  </div>
-                  <div className="illustr-mini-card">
-                    <div className="illustr-mini-card-title">Vite 6 Frontend Core</div>
-                    <span className="illustr-mini-card-tag" style={{ background: 'rgba(16, 185, 129, 0.2)', color: '#10b981' }}>Done</span>
-                  </div>
-                  <div className="illustr-mini-card">
-                    <div className="illustr-mini-card-title">Drag & Drop Engine</div>
-                    <span className="illustr-mini-card-tag" style={{ background: 'rgba(16, 185, 129, 0.2)', color: '#10b981' }}>Done</span>
-                  </div>
-                </div>
+              <div style={{ position: 'relative', borderRadius: '8px', overflow: 'hidden', border: '1px solid rgba(255, 255, 255, 0.1)' }}>
+                <img 
+                  src={heroImage} 
+                  alt="TaskFlow AI Frontend Kanban Board" 
+                  style={{ width: '100%', height: 'auto', display: 'block', borderRadius: '8px', objectFit: 'cover' }} 
+                />
               </div>
             </div>
           </motion.div>
