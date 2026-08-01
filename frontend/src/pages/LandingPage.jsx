@@ -413,7 +413,7 @@ export default function LandingPage() {
                 style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', background: 'rgba(34, 211, 238, 0.15)', borderColor: 'var(--cyan-bright)' }}
               >
                 <Zap size={14} className={isSimulating ? 'spin' : ''} /> 
-                {isSimulating ? 'Executing 3-Way Handshake...' : 'Simulate 3-Way Agent Task Run'}
+                {isSimulating ? 'Executing 3-Way Handshake...' : '⚡ Run Live Handshake Test'}
               </button>
             </div>
 
